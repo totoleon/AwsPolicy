@@ -1,3 +1,4 @@
+```
 # Modules to modify AWS resource based policies as an object based Sid
 # Supported: KMS CMK policy, S3 bucket policy, IAM Role trust relationship
 
@@ -32,3 +33,4 @@ s = role_trust_policy.select_statement('CrossAccount')
 s.Conditon = None
 s.save()
 s.source_policy.save()
+```
