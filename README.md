@@ -151,7 +151,7 @@ policy.reload()                 # Reload the policy document. This triggers gett
 policy.save()                   # Upload the current policy document to AWS
 policy.sids                     # A list of statement Ids of the policy
 policy.content                  # Policy content in dict
-
+policy.save(clean_deleted_principals=True)                   # Save the policy document. If there is any deleted resources it will clean it up from the malformatted policy
 # Statement
 statement.reload()              # Reconstruct the statement content from the loaded Policy
 statement.save()                # Save changes of the statement
