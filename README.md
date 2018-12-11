@@ -1,4 +1,4 @@
-# A small package that helps modifying AWS policies as an object
+# A package that helps modifying AWS policies as an object
 
 AWS SDKs provides a wide availbility allowing automation and codifying your infrastructure. However, minipulating policies are not in a good control, because they are treated as a whole block of String.
 
