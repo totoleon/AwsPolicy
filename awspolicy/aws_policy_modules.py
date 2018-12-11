@@ -1,4 +1,4 @@
-import json, boto3
+import json, boto3, re
 from copy import deepcopy
 
 class Statement(object):
@@ -46,6 +46,25 @@ class PolicyBase(object):
                 statement['Sid'] = 'statement' + str(c)
             c += 1
         self.save()
+    def __is_principal_valid(self, p):
+        # Identifying valid principals. Deleted principal will be something like AIDAJQABLZS4A3QDU576Q
+        if re.compile("[A-Z0-9]{21}").match(p):
+            return False
+        else:
+            return True
+    def clean_up_deleted_principals(self):
+        for statement in self.Statement:
+            principal = statement.get('Principal')
+            if type(principal) is dict:
+                aws_principals = principal.get('AWS')
+                if type(aws_principals) is not list:
+                    aws_principals = [aws_principals]
+                if aws_principals:
+                    valid_aws_principals = [ p for p in aws_principals if self.__is_principal_valid(p) ]
+                    if len(valid_aws_principals) == 0:
+                        raise ValueError('Statement {} has no valid AWS principal').format(str(statement))
+                    else:
+                        principal['AWS'] = valid_aws_principals
     def select_statement(self, sid):
         searching = [ statement for statement in self.Statement if statement.get('Sid', None) == sid ]
         if len(searching) == 0:
@@ -57,8 +76,10 @@ class PolicyBase(object):
         self.__fields = self.content.keys()
         for field in self.__fields:
             setattr(self, field, self.content.get(field, None))
-    def save(self):
+    def save(self, clean_deleted_principals=False):
         self.validate()
+        if clean_deleted_principals:
+            self.clean_up_deleted_principals()
         policy_string = json.dumps(self.content)
         resp = self.put_policy(policy_string)
         self.reload()
