@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="awspolicy",
-    version="0.0.1",
+    version="0.0.3",
     author="Hailong Li",
     author_email="hailong.leon@gmail.com",
     description="A package that helps modifying AWS policies as an object",
